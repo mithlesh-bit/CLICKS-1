@@ -1,8 +1,9 @@
+console.log("page loaded");
 (function () {
     var config = {
-        userSessionID: 'defaultSessionID', // Default session ID
+        userSessionID: 'defaultSessionID',
         serverURL: 'https://yourserver.com/log', // Default server URL to send data to
-        logConsole: true // Whether to log interactions to the console as well
+        logConsole: true
     };
 
     function getElementIdentifier(element) {
