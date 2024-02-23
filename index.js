@@ -1,8 +1,9 @@
 console.log("page loaded");
+
 (function () {
     var config = {
         userSessionID: 'defaultSessionID',
-        serverURL: 'https://yourserver.com/log', // Default server URL to send data to
+        serverURL: 'https://g4jf5qmr-3000.inc1.devtunnels.ms/api', // Ensure this is the correct endpoint
         logConsole: true
     };
 
@@ -27,7 +28,6 @@ console.log("page loaded");
         logInteraction(detail);
     }
 
-    // Function to handle input events
     function handleInput(event) {
         var inputElement = event.target;
         var elementIdentifier = getElementIdentifier(inputElement);
@@ -41,16 +41,29 @@ console.log("page loaded");
         logInteraction(detail);
     }
 
-    // Log interaction details
     function logInteraction(detail) {
         if (config.logConsole) {
             console.log('Interaction logged:', detail);
         }
-        // Extend this function to send data to a server using fetch() or another method
-        // Ensure compliance with CORS and privacy regulations
+
+        // Send data to the server using fetch API
+        fetch(config.serverURL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(detail),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json(); // This assumes the server responds with JSON
+            })
+            .then(data => console.log('Data successfully sent to the server:', data))
+            .catch((error) => console.error('Error sending data to the server:', error));
     }
 
-    // Attach event listeners to the document for click and input events
     function attachEventListeners() {
         document.addEventListener('click', handleClick);
         document.querySelectorAll('input[type="text"], textarea').forEach(function (input) {
@@ -58,7 +71,6 @@ console.log("page loaded");
         });
     }
 
-    // Expose a method for custom configuration
     window.TrackUserInteraction = {
         setConfig: function (userConfig) {
             Object.assign(config, userConfig);
@@ -66,6 +78,5 @@ console.log("page loaded");
         }
     };
 
-    // Automatically attach event listeners on script load
     attachEventListeners();
 })();
