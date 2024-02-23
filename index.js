@@ -3,7 +3,7 @@ console.log("page loadeddfjdf");
 (function () {
     var config = {
         userSessionID: 'defaultSessionID',
-        serverURL: 'https://g4jf5qmr-3000.inc1.devtunnels.ms/api', // Ensure this is the correct endpoint
+        serverURL: 'https://catching-user-data.onrender.com/api', // Ensure this is the correct endpoint
         logConsole: true
     };
 
