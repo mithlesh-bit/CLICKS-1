@@ -1,4 +1,4 @@
-console.log("page loaded");
+console.log("page loadeddfjdf");
 
 (function () {
     var config = {
