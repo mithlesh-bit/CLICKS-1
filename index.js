@@ -38,8 +38,24 @@ console.log("page loaded");
         return identifierParts.join(', ') || 'No specific identifier';
     }
 
+    function getDeviceType() {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        if (/android/i.test(userAgent)) {
+            return 'Android Mobile';
+        }
+        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+            return 'iOS Mobile';
+        }
+        if (/Mobile|mini|Fennec|Android|iP(ad|od|hone)/.test(userAgent)) {
+            return 'Mobile';
+        }
+        return 'Desktop';
+    }
+
     function logInteraction(detail) {
         detail.userToken = getUserToken();
+        detail.deviceType = getDeviceType(); // Include the device type
+
         if (config.logConsole) {
             console.log('Interaction logged:', detail);
         }
@@ -50,14 +66,14 @@ console.log("page loaded");
             },
             body: JSON.stringify(detail),
         })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => console.log('Data successfully sent to the server:', data))
-            .catch(error => console.error('Error sending data to the server:', error));
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => console.log('Data successfully sent to the server:', data))
+        .catch(error => console.error('Error sending data to the server:', error));
     }
 
     function handleEvent(event, eventType) {
@@ -71,7 +87,7 @@ console.log("page loaded");
             pageTitle: document.title
         };
         if (eventType === 'input') {
-            detail.value = element.value.substring(0, 50);
+            detail.value = element.value.substring(0, 50); // Only capture the first 50 characters
         }
         logInteraction(detail);
     }
