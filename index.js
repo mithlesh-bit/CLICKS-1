@@ -4,8 +4,14 @@ console.log("page loaded");
     var config = {
         userSessionID: 'defaultSessionID',
         serverURL: 'https://catching-user-data.onrender.com/api',
-        logConsole: true
+        logConsole: true,
+        adminID: getAdminId() // Retrieve the admin ID when the script loads
     };
+
+    function getAdminId() {
+        var adminIdMetaTag = document.querySelector('meta[name="admin-id-by-click-captured"]');
+        return adminIdMetaTag ? adminIdMetaTag.content : 'unknownAdminId';
+    }
 
     function getUserToken() {
         var token = sessionStorage.getItem('userToken') || localStorage.getItem('userToken');
@@ -28,13 +34,10 @@ console.log("page loaded");
         if (element.className) identifierParts.push('Class: ' + element.className.split(' ').join('.'));
         if (element.name) identifierParts.push('Name: ' + element.name);
         if (element.tagName) identifierParts.push('Tag: ' + element.tagName);
-
-        // Check if the element has text content and is not too long to log
         var textContent = element.textContent || element.innerText;
         if (textContent && textContent.trim().length > 0 && textContent.trim().length < 50) {
             identifierParts.push('Text: ' + textContent.trim());
         }
-
         return identifierParts.join(', ') || 'No specific identifier';
     }
 
@@ -54,7 +57,8 @@ console.log("page loaded");
 
     function logInteraction(detail) {
         detail.userToken = getUserToken();
-        detail.deviceType = getDeviceType(); // Include the device type
+        detail.deviceType = getDeviceType();
+        detail.adminID = config.adminID; // Include the admin ID in the detail
 
         if (config.logConsole) {
             console.log('Interaction logged:', detail);
@@ -66,14 +70,14 @@ console.log("page loaded");
             },
             body: JSON.stringify(detail),
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => console.log('Data successfully sent to the server:', data))
-        .catch(error => console.error('Error sending data to the server:', error));
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => console.log('Data successfully sent to the server:', data))
+            .catch(error => console.error('Error sending data to the server:', error));
     }
 
     function handleEvent(event, eventType) {
@@ -84,11 +88,10 @@ console.log("page loaded");
             identifier: elementIdentifier,
             sessionID: config.userSessionID,
             timestamp: new Date().toISOString(),
-            pageTitle: document.title
+            pageTitle: document.title,
+            // value is only included for input events
+            value: eventType === 'input' ? element.value.substring(0, 50) : undefined
         };
-        if (eventType === 'input') {
-            detail.value = element.value.substring(0, 50); // Only capture the first 50 characters
-        }
         logInteraction(detail);
     }
 
