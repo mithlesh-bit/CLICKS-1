@@ -29,6 +29,7 @@ console.log("page loaded");
         var token = sessionStorage.getItem(tokenName) ||
             localStorage.getItem(tokenName) ||
             getCookie(tokenName);
+        console.log(1111111111, token);
         return token || 'defaultSessionID';
     }
 
