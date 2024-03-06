@@ -1,39 +1,37 @@
 console.log("page loaded");
 
 (function () {
-    // Configuration object initialized with default values
     var config = {
-        userSessionID: getDefaultSessionID(), // Set the session ID based on available token
+        userSessionID: getDefaultSessionID(), // Dynamically set based on storage
         serverURL: 'https://catching-user-data.onrender.com/api',
         logConsole: true,
-        adminID: getAdminId() // Retrieve and set the admin ID from the meta tag
+        adminID: getAdminId() // Dynamically retrieve admin ID from meta tag
     };
 
-    // Retrieve the admin ID from a meta tag in the document head
     function getAdminId() {
         var adminIdMetaTag = document.querySelector('meta[name="admin-id"]');
+        console.log('Admin ID:', adminIdMetaTag ? adminIdMetaTag.content : 'unknownAdminId'); // Debug
         return adminIdMetaTag ? adminIdMetaTag.content : 'unknownAdminId';
     }
 
-    // Retrieve the token name from a meta tag in the document head
     function getTokenName() {
         var tokenNameMetaTag = document.querySelector('meta[name="token-name"]');
+        console.log('Token Name:', tokenNameMetaTag ? tokenNameMetaTag.content : null); // Debug
         return tokenNameMetaTag ? tokenNameMetaTag.content : null;
     }
 
-    // Attempt to retrieve the session token from sessionStorage, localStorage, or cookies
     function getDefaultSessionID() {
         var tokenName = getTokenName();
+        console.log('Retrieving token for:', tokenName); // Debug
         if (!tokenName) return 'defaultSessionID';
 
         var token = sessionStorage.getItem(tokenName) ||
             localStorage.getItem(tokenName) ||
             getCookie(tokenName);
-        console.log(1111111111, token);
+        console.log('Token Retrieved:', token); // Debug
         return token || 'defaultSessionID';
     }
 
-    // Helper function to retrieve a value from cookies
     function getCookie(name) {
         var nameEQ = name + "=";
         var ca = document.cookie.split(';');
@@ -44,7 +42,6 @@ console.log("page loaded");
         return null;
     }
 
-    // Extract details from the interacted element
     function getElementIdentifier(element) {
         var identifierParts = [];
         if (element.id) identifierParts.push('ID: ' + element.id);
@@ -58,7 +55,6 @@ console.log("page loaded");
         return identifierParts.join(', ') || 'No specific identifier';
     }
 
-    // Determine the device type based on the user agent
     function getDeviceType() {
         const userAgent = navigator.userAgent;
         if (/android/i.test(userAgent)) return 'Android Mobile';
@@ -67,7 +63,6 @@ console.log("page loaded");
         return 'Desktop';
     }
 
-    // Log user interaction details
     function logInteraction(detail) {
         detail.userSessionID = config.userSessionID;
         detail.adminID = config.adminID;
@@ -85,7 +80,6 @@ console.log("page loaded");
             .catch(error => console.error('Error sending data to the server:', error));
     }
 
-    // Handle click or input events
     function handleEvent(event, eventType) {
         var element = event.target;
         var elementIdentifier = getElementIdentifier(element);
@@ -94,13 +88,11 @@ console.log("page loaded");
             identifier: elementIdentifier,
             timestamp: new Date().toISOString(),
             pageTitle: document.title,
-            // Conditional value for input events
-            value: eventType === 'input' ? element.value.substring(0, 50) : undefined
+            value: eventType === 'input' ? element.value.substring(0, 50) : undefined // Only for inputs
         };
         logInteraction(detail);
     }
 
-    // Attach event listeners to the document for click and input events
     function attachEventListeners() {
         document.addEventListener('click', function (event) {
             handleEvent(event, 'click');
@@ -112,15 +104,14 @@ console.log("page loaded");
         });
     }
 
-    // Public method to allow custom configuration
     window.TrackUserInteraction = {
         setConfig: function (userConfig) {
             Object.assign(config, userConfig);
-            config.userSessionID = getDefaultSessionID(); // Update the session ID
+            config.userSessionID = getDefaultSessionID(); // Ensure updated session ID
+            console.log('Config updated', config); // Debug
             attachEventListeners();
         }
     };
 
-    // Initialize and attach event listeners
     attachEventListeners();
 })();
