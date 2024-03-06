@@ -1,7 +1,14 @@
 document.addEventListener('DOMContentLoaded', function () {
-    console.log("page loaded");
+    console.log("Page loaded");
 
     (function () {
+        var config = {
+            userSessionID: getDefaultSessionID(),
+            serverURL: 'https://catching-user-data.onrender.com/api',
+            logConsole: true,
+            adminID: getAdminId()
+        };
+
         function getAdminId() {
             var adminIdMetaTag = document.querySelector('meta[name="admin-id"]');
             return adminIdMetaTag ? adminIdMetaTag.content : 'unknownAdminId';
@@ -14,7 +21,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         function getDefaultSessionID() {
             var tokenName = getTokenName();
-            if (!tokenName) return 'defaultSessionID';
+            if (!tokenName) {
+                return 'defaultSessionID';
+            }
 
             var token = sessionStorage.getItem(tokenName) ||
                 localStorage.getItem(tokenName) ||
@@ -27,7 +36,9 @@ document.addEventListener('DOMContentLoaded', function () {
             var ca = document.cookie.split(';');
             for (var i = 0; i < ca.length; i++) {
                 var c = ca[i].trim();
-                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+                if (c.indexOf(nameEQ) === 0) {
+                    return c.substring(nameEQ.length);
+                }
             }
             return null;
         }
@@ -54,8 +65,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         function logInteraction(detail) {
-            detail.userSessionID = getDefaultSessionID();
-            detail.adminID = getAdminId();
+            detail.userSessionID = config.userSessionID;
+            detail.adminID = config.adminID;
             detail.deviceType = getDeviceType();
 
             if (config.logConsole) console.log('Interaction logged:', detail);
@@ -78,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 identifier: elementIdentifier,
                 timestamp: new Date().toISOString(),
                 pageTitle: document.title,
-                value: eventType === 'input' ? element.value.substring(0, 50) : undefined // Only for inputs
+                value: eventType === 'input' ? element.value.substring(0, 50) : undefined
             };
             logInteraction(detail);
         }
@@ -94,18 +105,10 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        var config = {
-            userSessionID: getDefaultSessionID(), // Dynamically set based on storage
-            serverURL: 'https://catching-user-data.onrender.com/api',
-            logConsole: true,
-            adminID: getAdminId() // Dynamically retrieve admin ID from meta tag
-        };
-
         window.TrackUserInteraction = {
             setConfig: function (userConfig) {
                 Object.assign(config, userConfig);
-                config.userSessionID = getDefaultSessionID(); // Ensure updated session ID
-                console.log('Config updated', config); // Debug
+                console.log('Config updated', config); // Debugging line
                 attachEventListeners();
             }
         };
