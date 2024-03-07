@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    console.log("Page loaded");
+    console.log("Page loaded 1");
 
     var config = {
         userSessionID: getDefaultSessionID(), // This will now also handle logging
@@ -15,11 +15,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function getTokenName() {
         var tokenNameMetaTag = document.querySelector('meta[name="token-name"]');
+        console.log(tokenNameMetaTag);
         return tokenNameMetaTag ? tokenNameMetaTag.content : null;
     }
 
     function getDefaultSessionID() {
-        var tokenName = getTokenName();
+        var tokenName = "jwt";
         if (!tokenName) {
             console.log("Token name not specified.");
             return 'defaultSessionID';
