@@ -2,15 +2,11 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log("Page loaded");
 
     var config = {
-        userSessionID: 'defaultSessionID', // Set a default value initially
+        userSessionID: getDefaultSessionID(), // This will now also handle logging
         serverURL: 'https://catching-user-data.onrender.com/api',
         logConsole: true,
-        adminID: 'unknownAdminId', // Default value
+        adminID: getAdminId(),
     };
-
-    // Call these functions after DOMContentLoaded to ensure meta tags are accessible
-    config.adminID = getAdminId();
-    config.userSessionID = getDefaultSessionID(); // Update the sessionID with actual token
 
     function getAdminId() {
         var adminIdMetaTag = document.querySelector('meta[name="admin-id"]');
@@ -25,21 +21,20 @@ document.addEventListener('DOMContentLoaded', function () {
     function getDefaultSessionID() {
         var tokenName = getTokenName();
         if (!tokenName) {
-            console.log("Token name not found in meta tags.");
+            console.log("Token name not specified.");
             return 'defaultSessionID';
         }
 
-        // Try retrieving the token from all possible storage options
         var token = sessionStorage.getItem(tokenName) ||
             localStorage.getItem(tokenName) ||
             getCookie(tokenName);
 
         if (token) {
-            console.log("Token found: ", token);
+            console.log("Token found: ", token); // Log the found token
             return token;
         } else {
-            console.log("Token not found in storage.");
-            return 'defaultSessionID';
+            console.log("Unidentified user"); // Token not found
+            return 'unidentifiedUser'; // Use a different identifier for clarity
         }
     }
 
@@ -52,7 +47,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return null;
     }
-
 
     function getBrowserInfo() {
         var ua = navigator.userAgent, tem,
@@ -130,14 +124,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     attachEventListeners();
 
-    // Update config functionality, if needed
     window.TrackUserInteraction = {
         setConfig: function (userConfig) {
             Object.assign(config, userConfig);
             if (userConfig.tokenName || userConfig.adminID) {
-                // Re-fetch token/adminID if new names are provided
                 config.adminID = getAdminId();
-                config.userSessionID = getDefaultSessionID();
+                config.userSessionID = getDefaultSessionID(); // Re-fetch and log appropriately
             }
             console.log('Config updated', config);
             attachEventListeners();
