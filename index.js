@@ -2,11 +2,15 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log("Page loaded");
 
     var config = {
-        userSessionID: getDefaultSessionID(),
+        userSessionID: 'defaultSessionID', // Set a default value initially
         serverURL: 'https://catching-user-data.onrender.com/api',
         logConsole: true,
-        adminID: getAdminId()
+        adminID: 'unknownAdminId', // Default value
     };
+
+    // Call these functions after DOMContentLoaded to ensure meta tags are accessible
+    config.adminID = getAdminId();
+    config.userSessionID = getDefaultSessionID(); // Update the sessionID with actual token
 
     function getAdminId() {
         var adminIdMetaTag = document.querySelector('meta[name="admin-id"]');
@@ -20,11 +24,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function getDefaultSessionID() {
         var tokenName = getTokenName();
-        if (!tokenName) return 'defaultSessionID';
+        if (!tokenName) {
+            console.log("Token name not found in meta tags.");
+            return 'defaultSessionID';
+        }
+
+        // Try retrieving the token from all possible storage options
         var token = sessionStorage.getItem(tokenName) ||
             localStorage.getItem(tokenName) ||
             getCookie(tokenName);
-        return token || 'defaultSessionID';
+
+        if (token) {
+            console.log("Token found: ", token);
+            return token;
+        } else {
+            console.log("Token not found in storage.");
+            return 'defaultSessionID';
+        }
     }
 
     function getCookie(name) {
@@ -32,10 +48,11 @@ document.addEventListener('DOMContentLoaded', function () {
         var ca = document.cookie.split(';');
         for (var i = 0; i < ca.length; i++) {
             var c = ca[i].trim();
-            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length);
+            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length);
         }
         return null;
     }
+
 
     function getBrowserInfo() {
         var ua = navigator.userAgent, tem,
@@ -111,13 +128,19 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    attachEventListeners();
+
+    // Update config functionality, if needed
     window.TrackUserInteraction = {
         setConfig: function (userConfig) {
             Object.assign(config, userConfig);
+            if (userConfig.tokenName || userConfig.adminID) {
+                // Re-fetch token/adminID if new names are provided
+                config.adminID = getAdminId();
+                config.userSessionID = getDefaultSessionID();
+            }
             console.log('Config updated', config);
             attachEventListeners();
         }
     };
-
-    attachEventListeners();
 });
