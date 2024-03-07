@@ -39,14 +39,35 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function getCookie(name) {
+        console.log("All cookies currently:", document.cookie); // Log all cookies
+
         var nameEQ = name + "=";
         var ca = document.cookie.split(';');
         for (var i = 0; i < ca.length; i++) {
-            var c = ca[i].trim();
-            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length);
+            var c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1);
+            if (c.indexOf(nameEQ) === 0) {
+                var cookieValue = c.substring(nameEQ.length);
+                console.log("Cookie found - Name:", name, "Value:", cookieValue);
+                return cookieValue;
+            }
         }
+
+        console.log("Cookie not found:", name);
         return null;
     }
+
+    // Attempt to retrieve the JWT token after the DOM content has loaded
+    document.addEventListener('DOMContentLoaded', function () {
+        var jwtToken = getCookie('jwt');
+        if (jwtToken) {
+            console.log("JWT Token:", jwtToken);
+            // Continue with your logic using the token
+        } else {
+            console.log("Unidentified user - No JWT Token found");
+            // Handle the absence of the token
+        }
+    });
 
     function getBrowserInfo() {
         var ua = navigator.userAgent, tem,
