@@ -51,7 +51,18 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function logInteraction(detail) {
-        detail.deviceType = config.deviceType;
+        var browserInfo = getBrowserInfo();
+
+        // Ensure all properties are assigned
+        detail.userSessionID = config.userSessionID; // already provided
+        detail.deviceType = getDeviceType(); // already provided
+        detail.adminID = config.adminID; // already provided
+        detail.eventType = detail.eventType; // passed from handleEvent
+        detail.identifier = detail.identifier; // passed from handleEvent
+        detail.pageTitle = document.title; // can be fetched directly
+        detail.browserName = browserInfo.name; // extracted from userAgent
+        detail.browserVersion = browserInfo.version; // extracted from userAgent
+        detail.currentURL = window.location.href; // fetched directly
 
         fetch(config.serverURL, {
             method: 'POST',
