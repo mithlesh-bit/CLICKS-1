@@ -15,12 +15,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function getTokenName() {
         var tokenNameMetaTag = document.querySelector('meta[name="token-name"]');
-        console.log(tokenNameMetaTag);
         return tokenNameMetaTag ? tokenNameMetaTag.content : null;
     }
 
     function getDefaultSessionID() {
-        var tokenName = "jwt";
+        var tokenName = getTokenName();
+        console.log(tokenName);
         if (!tokenName) {
             console.log("Token name not specified.");
             return 'defaultSessionID';
