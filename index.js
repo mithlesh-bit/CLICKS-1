@@ -18,6 +18,21 @@ document.addEventListener('DOMContentLoaded', function () {
         return tokenNameMetaTag ? tokenNameMetaTag.content : null;
     }
 
+    function getDeviceType() {
+        const userAgent = navigator.userAgent;
+        if (/mobile/i.test(userAgent)) {
+            return 'Mobile';
+        } else if (/tablet/i.test(userAgent)) {
+            return 'Tablet';
+        } else {
+            return 'Desktop';
+        }
+    }
+
+    function logInteraction(detail) {
+        detail.deviceType = getDeviceType();
+    }
+
     function getDefaultSessionID() {
         var tokenName = getTokenName();
         console.log(tokenName);
@@ -31,16 +46,14 @@ document.addEventListener('DOMContentLoaded', function () {
             getCookie(tokenName);
 
         if (token) {
-            console.log("Token found: ", token); // Log the found token
+
             return token;
         } else {
-            console.log("Unidentified user"); // Token not found
             return 'unidentifiedUser'; // Use a different identifier for clarity
         }
     }
 
     function getCookie(name) {
-        console.log("All cookies currently:", document.cookie); // Log all cookies
 
         var nameEQ = name + "=";
         var ca = document.cookie.split(';');
@@ -62,11 +75,9 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('DOMContentLoaded', function () {
         var jwtToken = getCookie('jwt');
         if (jwtToken) {
-            console.log("JWT Token:", jwtToken);
-            // Continue with your logic using the token
+
         } else {
-            console.log("Unidentified user - No JWT Token found");
-            // Handle the absence of the token
+
         }
     });
 
