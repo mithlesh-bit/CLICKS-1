@@ -26,49 +26,107 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function getCookie(name) {
-        va
-
-        function handleEvent(event, eventType) {
-            var element = event.target;
-            var elementIdentifier = getElementIdentifier(element);
-            var detail = {
-                eventType: eventType,
-                identifier: elementIdentifier,
-                timestamp: new Date().toISOString(),
-                pageTitle: document.title,
-                value: eventType === 'input' ? element.value.substring(0, 50) : undefined,
-                userSessionID: config.userSessionID
-            };
-            logInteraction(detail);
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
         }
-
-        function getElementIdentifier(element) {
-            var identifier = '';
-            if (element.id) {
-                identifier += 'ID: ' + element.id + '; ';
-            }
-            if (element.className) {
-                identifier += 'Class: ' + element.className + '; ';
-            }
-            if (element.name) {
-                identifier += 'Name: ' + element.name + '; ';
-            }
-            identifier += 'Tag: ' + element.tagName.toLowerCase();
-            return identifier;
-        }
-
-        function attachEventListeners() {
-            document.addEventListener('click', function (event) {
-                handleEvent(event, 'click');
-            });
-
-            document.querySelectorAll('input[type="text"], textarea').forEach(function (input) {
-                input.addEventListener('input', function (event) {
-                    handleEvent(event, 'input');
-                });
-            });
-        }
-
-        attachEventListeners();
+        return null;
     }
+
+    function getDeviceType() {
+        const userAgent = navigator.userAgent;
+        if (/mobile/i.test(userAgent)) return 'Mobile';
+        if (/tablet/i.test(userAgent)) return 'Tablet';
+        return 'Desktop';
+    }
+
+    function logInteraction(detail) {
+        // Adding browser info to the detail object before sending
+        var browserInfo = getBrowserInfo();
+        detail.browserName = browserInfo.name;
+        detail.browserVersion = browserInfo.version;
+        detail.adminID = config.adminID;
+        detail.deviceType = config.deviceType;
+        detail.location = config.location;
+
+        fetch(config.serverURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(detail),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => console.log(data))
+            .catch(error => console.error('Error logging interaction:', error));
+    }
+
+    function getBrowserInfo() {
+        // You might want to replace this with a more robust solution for browser detection
+        var ua = navigator.userAgent, tem,
+            M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+        if (/trident/i.test(M[1])) {
+            tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
+            return { name: 'IE', version: (tem[1] || '') };
+        }
+        if (M[1] === 'Chrome') {
+            tem = ua.match(/\bOPR|Edge\/(\d+)/);
+            if (tem != null) return { name: 'Opera', version: tem[1] };
+        }
+        M = M[2] ? [M[1], M[2]] : [navigator.appName, navigator.appVersion, '-?'];
+        if ((tem = ua.match(/version\/(\d+)/i)) != null) M.splice(1, 1, tem[1]);
+        return {
+            name: M[0],
+            version: M[1]
+        };
+    }
+
+    function handleEvent(event, eventType) {
+        var element = event.target;
+        var elementIdentifier = getElementIdentifier(element);
+        var detail = {
+            eventType: eventType,
+            identifier: elementIdentifier,
+            timestamp: new Date().toISOString(),
+            pageTitle: document.title,
+            value: eventType === 'input' ? element.value.substring(0, 50) : undefined,
+            userSessionID: config.userSessionID,
+        };
+        logInteraction(detail);
+    }
+
+    function getElementIdentifier(element) {
+        var identifier = '';
+        if (element.id) {
+            identifier += 'ID: ' + element.id + '; ';
+        }
+        if (element.className) {
+            identifier += 'Class: ' + element.className + '; ';
+        }
+        if (element.name) {
+            identifier += 'Name: ' + element.name + '; ';
+        }
+        identifier += 'Tag: ' + element.tagName.toLowerCase();
+        return identifier.trim();
+    }
+
+    function attachEventListeners() {
+        document.addEventListener('click', function (event) {
+            handleEvent(event, 'click');
+        });
+
+        document.querySelectorAll('input[type="text"], textarea').forEach(function (input) {
+            input.addEventListener('input', function (event) {
+                handleEvent(event, 'input');
+            });
+        });
+    }
+
+    attachEventListeners();
 });
