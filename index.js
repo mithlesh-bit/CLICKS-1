@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     console.log("Page loaded");
+    console.log(getTokenName());
 
     var config = {
         userSessionID: getDefaultSessionID(),
@@ -16,7 +17,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function getTokenName() {
         var tokenNameMetaTag = document.querySelector('meta[name="token-name"]');
-        console.log(tokenNameMetaTag);
         return tokenNameMetaTag ? tokenNameMetaTag.content : 'token';
     }
 
