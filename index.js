@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function logInteraction(detail) {
-        console.log(detail);
+        console.log(browserInfo);
         var browserInfo = getBrowserInfo();
         detail.browserName = browserInfo.name;
         detail.browserVersion = browserInfo.version;
