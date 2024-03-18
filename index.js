@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
         detail.adminID = config.adminID;
         detail.deviceType = config.deviceType;
         detail.location = config.location;
-        console.log(browserName, browserVersion, adminID, deviceType, location);
+        console.log(detail.browserName, detail.browserVersion, detail.adminID, detail.deviceType, detail.location);
 
         // fetch(config.serverURL, {
         //     method: 'POST',
