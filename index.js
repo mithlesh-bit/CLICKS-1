@@ -16,7 +16,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function getTokenName() {
         var tokenNameMetaTag = document.querySelector('meta[name="token-name"]');
-        return tokenNameMetaTag ? tokenNameMetaTag.content : 'jwt';
+        console.log(tokenNameMetaTag);
+        return tokenNameMetaTag ? tokenNameMetaTag.content : 'token';
     }
 
     function getDefaultSessionID() {
@@ -50,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
         detail.adminID = config.adminID;
         detail.deviceType = config.deviceType;
         detail.location = config.location;
-        console.log(browserInfo.name, browserInfo.version, config.adminID, config.deviceType, config.location);
+        // console.log(browserInfo.name, browserInfo.version, config.adminID, config.deviceType, config.location);
 
         // fetch(config.serverURL, {
         //     method: 'POST',
