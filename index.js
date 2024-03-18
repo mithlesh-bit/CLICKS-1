@@ -44,13 +44,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function logInteraction(detail) {
-        console.log(browserInfo);
         var browserInfo = getBrowserInfo();
         detail.browserName = browserInfo.name;
         detail.browserVersion = browserInfo.version;
         detail.adminID = config.adminID;
         detail.deviceType = config.deviceType;
         detail.location = config.location;
+        console.log(browserName, browserVersion, adminID, deviceType, location);
 
         // fetch(config.serverURL, {
         //     method: 'POST',
