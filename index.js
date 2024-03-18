@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function logInteraction(detail) {
-        // Adding browser info to the detail object before sending
+        console.log(detail);
         var browserInfo = getBrowserInfo();
         detail.browserName = browserInfo.name;
         detail.browserVersion = browserInfo.version;
@@ -52,23 +52,22 @@ document.addEventListener('DOMContentLoaded', function () {
         detail.deviceType = config.deviceType;
         detail.location = config.location;
 
-        fetch(config.serverURL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(detail),
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => console.log(data))
-            .catch(error => console.error('Error logging interaction:', error));
+        // fetch(config.serverURL, {
+        //     method: 'POST',
+        //     headers: { 'Content-Type': 'application/json' },
+        //     body: JSON.stringify(detail),
+        // })
+        //     .then(response => {
+        //         if (!response.ok) {
+        //             throw new Error('Network response was not ok');
+        //         }
+        //         return response.json();
+        //     })
+        //     .then(data => console.log(data))
+        //     .catch(error => console.error('Error logging interaction:', error));
     }
 
     function getBrowserInfo() {
-        // You might want to replace this with a more robust solution for browser detection
         var ua = navigator.userAgent, tem,
             M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
         if (/trident/i.test(M[1])) {
