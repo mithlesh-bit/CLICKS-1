@@ -1,16 +1,14 @@
+
+function getAdminId() {
+    var adminIdMetaTag = document.querySelector('meta[name="admin-id-by-click-captured"]');
+    console.log(adminIdMetaTag);
+    return adminIdMetaTag ? adminIdMetaTag.content : 'unknownAdminId';
+}
 document.addEventListener('DOMContentLoaded', function () {
     console.log("Page loaded");
     console.log(getTokenName());
 
-    document.addEventListener('DOMContentLoaded', (event) => {
-        function getAdminId() {
-            var adminIdMetaTag = document.querySelector('meta[name="admin-id-by-click-captured"]');
-            console.log(adminIdMetaTag);
-            return adminIdMetaTag ? adminIdMetaTag.content : 'unknownAdminId';
-        }
 
-        console.log(getAdminId()); // Call the function after the DOM is fully loaded
-    });
 
 
     function getTokenName() {
