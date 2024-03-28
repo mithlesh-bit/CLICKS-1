@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
     console.log("Page loaded");
-    console.log(getAdminId());
-    console.log(getTokenName());
+    // console.log(getAdminId());
+    // console.log(getTokenName());
+    console.log(getDefaultSessionID());
+    console.log(getCookie());
     var config = {
         userSessionID: getDefaultSessionID(),
         serverURL: 'https://catching-user-data.onrender.com/api',
