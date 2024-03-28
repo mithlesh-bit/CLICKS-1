@@ -2,18 +2,16 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log("Page loaded");
     console.log(getTokenName());
 
-    var config = {
-        userSessionID: getDefaultSessionID(),
-        serverURL: 'https://catching-user-data.onrender.com/api',
-        adminID: getAdminId(),
-        deviceType: getDeviceType(),
-        location: window.location.pathname,
-    };
+    document.addEventListener('DOMContentLoaded', (event) => {
+        function getAdminId() {
+            var adminIdMetaTag = document.querySelector('meta[name="admin-id-by-click-captured"]');
+            console.log(adminIdMetaTag);
+            return adminIdMetaTag ? adminIdMetaTag.content : 'unknownAdminId';
+        }
 
-    function getAdminId() {
-        var adminIdMetaTag = document.querySelector('meta[name="admin-id"]');
-        return adminIdMetaTag ? adminIdMetaTag.content : 'unknownAdminId';
-    }
+        console.log(getAdminId()); // Call the function after the DOM is fully loaded
+    });
+
 
     function getTokenName() {
         var tokenNameMetaTag = document.querySelector('meta[name="token-name"]');
