@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log(getAllCookies());
     console.log(getDeviceType());
 
+
     var config = {
         userSessionID: getDefaultSessionID(),
         serverURL: 'https://catching-user-data.onrender.com/api',
