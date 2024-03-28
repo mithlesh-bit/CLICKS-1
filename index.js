@@ -3,8 +3,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // console.log(getAdminId());
     // console.log(getTokenName());
     // console.log(getDefaultSessionID());
-    console.log(getAllCookies());
-    console.log(getDeviceType());
+    // console.log(getAllCookies());
+    // console.log(getDeviceType());
+    console.log(getBrowserInfo());
+
 
 
     var config = {
