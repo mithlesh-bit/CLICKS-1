@@ -51,30 +51,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return 'Desktop';
     }
 
-    function logInteraction(detail) {
-        var browserInfo = getBrowserInfo();
-        detail.browserName = browserInfo.name;
-        detail.browserVersion = browserInfo.version;
-        detail.adminID = config.adminID;
-        detail.deviceType = config.deviceType;
-        detail.location = config.location;
-        // console.log(browserInfo.name, browserInfo.version, config.adminID, config.deviceType, config.location);
-
-        // fetch(config.serverURL, {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify(detail),
-        // })
-        //     .then(response => {
-        //         if (!response.ok) {
-        //             throw new Error('Network response was not ok');
-        //         }
-        //         return response.json();
-        //     })
-        //     .then(data => console.log(data))
-        //     .catch(error => console.error('Error logging interaction:', error));
-    }
-
     function getBrowserInfo() {
         var ua = navigator.userAgent, tem,
             M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
@@ -94,6 +70,29 @@ document.addEventListener('DOMContentLoaded', function () {
         };
     }
 
+    function logInteraction(detail) {
+        var browserInfo = getBrowserInfo();
+        detail.browserName = browserInfo.name;
+        detail.browserVersion = browserInfo.version;
+        detail.adminID = config.adminID;
+        detail.deviceType = config.deviceType;
+        detail.location = config.location;
+        console.log('Interaction details:', detail);
+        // fetch(config.serverURL, {
+        //     method: 'POST',
+        //     headers: { 'Content-Type': 'application/json' },
+        //     body: JSON.stringify(detail),
+        // })
+        //     .then(response => {
+        //         if (!response.ok) {
+        //             throw new Error('Network response was not ok');
+        //         }
+        //         return response.json();
+        //     })
+        //     .then(data => console.log(data))
+        //     .catch(error => console.error('Error logging interaction:', error));
+    }
+
     function handleEvent(event, eventType) {
         var element = event.target;
         var elementIdentifier = getElementIdentifier(element);
@@ -105,6 +104,8 @@ document.addEventListener('DOMContentLoaded', function () {
             value: eventType === 'input' ? element.value.substring(0, 50) : undefined,
             userSessionID: config.userSessionID,
         };
+        console.log('Handling event:', eventType, 'on element:', element); // Log event handling
+
         logInteraction(detail);
     }
 
@@ -133,6 +134,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 handleEvent(event, 'input');
             });
         });
+        console.log('Event listeners attached.'); // Log when event listeners are attached
+
     }
 
     attachEventListeners();
