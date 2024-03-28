@@ -79,19 +79,19 @@ document.addEventListener('DOMContentLoaded', function () {
         detail.deviceType = config.deviceType;
         detail.location = config.location;
         console.log('Interaction details:', detail);
-        // fetch(config.serverURL, {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify(detail),
-        // })
-        //     .then(response => {
-        //         if (!response.ok) {
-        //             throw new Error('Network response was not ok');
-        //         }
-        //         return response.json();
-        //     })
-        //     .then(data => console.log(data))
-        //     .catch(error => console.error('Error logging interaction:', error));
+        fetch(config.serverURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(detail),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => console.log(data))
+            .catch(error => console.error('Error logging interaction:', error));
     }
 
     function handleEvent(event, eventType) {
@@ -135,8 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 handleEvent(event, 'input');
             });
         });
-        console.log('Event listeners attached.'); // Log when event listeners are attached
-
+        console.log('Event listeners attached.');
     }
 
     attachEventListeners();
